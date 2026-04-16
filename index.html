@@ -503,32 +503,22 @@ ${BLUEPRINTS}
 
           return (
             <div style={{ minHeight: "100vh", background: THEME.ink, color: THEME.paper }}>
-              {/* ── 매거진 마스트헤드 ─────────────────────── */}
-              <header style={{ borderBottom: `1px solid ${THEME.line}`, padding: "26px 28px 22px" }}>
-                <div style={{ maxWidth: "680px", margin: "0 auto" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap" }}>
-                      <span style={{ fontFamily: THEME.mono, fontSize: "10px", color: THEME.candle, letterSpacing: "0.3em" }}>ISSUE · V2</span>
-                      <span style={{ fontFamily: THEME.mono, fontSize: "10px", color: THEME.textFaint, letterSpacing: "0.25em" }}>ROUND&nbsp;TABLE</span>
-                    </div>
-                    <span style={{ fontFamily: THEME.mono, fontSize: "10px", color: THEME.textFaint, letterSpacing: "0.2em" }}>독서모임 · 프롬프트 · 에디션</span>
+              {/* ── 헤더 ─────────────────────── */}
+              <header style={{ borderBottom: `1px solid ${THEME.line}`, padding: "20px 28px" }}>
+                <div style={{ maxWidth: "680px", margin: "0 auto", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "14px", flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
+                    <span style={{ fontFamily: THEME.serif, fontSize: "18px", fontWeight: 500, color: THEME.paper, letterSpacing: "-0.005em" }}>
+                      독서모임 프롬프트
+                    </span>
+                    <span style={{ fontFamily: THEME.mono, fontSize: "10px", color: THEME.candle, letterSpacing: "0.25em" }}>V2</span>
                   </div>
-                  <h1 style={{
-                    fontFamily: THEME.serif, fontWeight: 500, fontSize: "34px",
-                    lineHeight: 1.2, margin: "14px 0 8px", letterSpacing: "-0.01em",
-                  }}>
-                    오늘의 책을 꺼내, <span style={{ fontStyle: "italic", color: THEME.candle }}>둥글게 둘러앉다.</span>
-                  </h1>
-                  <p style={{
-                    fontFamily: THEME.serif, fontSize: "14px", color: THEME.paperDim,
-                    margin: 0, lineHeight: 1.7, fontStyle: "italic",
-                  }}>
-                    읽은 이를 환대하고, 잘못 읽은 이도 경청하는 자리. 그 자리에서 쓰일 한 장의 프롬프트.
-                  </p>
+                  <span style={{ fontFamily: THEME.mono, fontSize: "10px", color: THEME.textFaint, letterSpacing: "0.2em" }}>
+                    알라딘 → Gemini
+                  </span>
                 </div>
               </header>
 
-              <main style={{ maxWidth: "680px", margin: "0 auto", padding: "44px 22px 120px" }}>
+              <main style={{ maxWidth: "680px", margin: "0 auto", padding: "36px 22px 120px" }}>
 
                 <Sec num={1} total={TOTAL_STEPS} label="BOOK" title="오늘 함께 펼칠 책" lede="제목을 적어 주세요. 정확도 순으로 다섯 권을 꺼내 올립니다.">
                   {step === 1 && (
