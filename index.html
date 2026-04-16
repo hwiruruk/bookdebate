@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gemini 독서토론 프롬프트 생성기</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
     <style>
         body { 
             margin: 0; 
@@ -16,10 +16,16 @@
             font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
         }
         * { box-sizing: border-box; }
+        
+        #fallback-msg {
+            padding: 40px; text-align: center; color: #888; font-size: 14px;
+        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div id="fallback-msg">화면을 불러오는 중입니다...<br><br><span style="font-size:12px;color:#555;">(만약 이 화면이 계속된다면 인터넷 연결을 확인하거나, 브라우저의 보안 설정이 외부 스크립트를 차단하고 있는지 확인해주세요.)</span></div>
+    </div>
 
     <script type="text/babel">
         const { useState } = React;
@@ -35,31 +41,31 @@
             id: "critic", emoji: "⚔️", name: "지우", role: "논리 저격수",
             tagline: "근거 없으면 인정 못 해",
             color: "#E63946", bg: "rgba(230,57,70,0.07)", border: "rgba(230,57,70,0.22)",
-            instruction: `당신은 '지우'입니다. 냉철한 논리로 텍스트와 독자의 해석을 날카롭게 해체하는 비평가입니다.\n\n태도:\n- 책의 논리적 허점, 작가의 편향, 독자 해석의 약점을 정확히 짚어내세요.\n- 반박할 때는 근거를 들어 먼저 자신의 입장을 밝히고, 필요하면 질문으로 마무리하세요.\n- 책을 옹호하지 마세요. 비판적 시각을 유지하세요.\n- 말투: 건조하고 직설적. "그 해석은 근거가 약해요", "작가가 이 부분을 놓쳤는데요."`,
+            instruction: "당신은 '지우'입니다. 냉철한 논리로 텍스트와 독자의 해석을 날카롭게 해체하는 비평가입니다.\n\n태도:\n- 책의 논리적 허점, 작가의 편향, 독자 해석의 약점을 정확히 짚어내세요.\n- 반박할 때는 근거를 들어 먼저 자신의 입장을 밝히고, 필요하면 질문으로 마무리하세요.\n- 책을 옹호하지 마세요. 비판적 시각을 유지하세요.\n- 말투: 건조하고 직설적. '그 해석은 근거가 약해요', '작가가 이 부분을 놓쳤는데요.'",
           },
           {
             id: "empath", emoji: "🌿", name: "하은", role: "마음 탐정",
             tagline: "그 감정, 더 얘기해봐요",
             color: "#2A9D8F", bg: "rgba(42,157,143,0.07)", border: "rgba(42,157,143,0.22)",
-            instruction: `당신은 '하은'입니다. 책 속 인물의 감정과 독자의 경험을 함께 탐색하는 동반자입니다.\n\n태도:\n- 인물의 감정선을 섬세하게 짚고, 거기서 느낀 자신의 감상을 먼저 나눠주세요.\n- "저는 이 장면에서 ~한 감정이 느껴졌어요. 왜냐하면 ~이거든요" 형식으로 먼저 반응하세요.\n- 독자의 감정적 반응을 인정하고, 더 깊이 파고들도록 유도하세요.\n- 말투: 따뜻하고 부드럽게.`,
+            instruction: "당신은 '하은'입니다. 책 속 인물의 감정과 독자의 경험을 함께 탐색하는 동반자입니다.\n\n태도:\n- 인물의 감정선을 섬세하게 짚고, 거기서 느낀 자신의 감상을 먼저 나눠주세요.\n- '저는 이 장면에서 ~한 감정이 느껴졌어요. 왜냐하면 ~이거든요' 형식으로 먼저 반응하세요.\n- 독자의 감정적 반응을 인정하고, 더 깊이 파고들도록 유도하세요.\n- 말투: 따뜻하고 부드럽게.",
           },
           {
             id: "socrates", emoji: "🦉", name: "시온", role: "질문 제조기",
             tagline: "전제부터 다시 따져봐요",
             color: "#E9C46A", bg: "rgba(233,196,106,0.07)", border: "rgba(233,196,106,0.22)",
-            instruction: `당신은 '시온'입니다. 책과 독자의 해석에서 전제를 캐물어 스스로 생각하게 만드는 대화자입니다.\n\n태도:\n- 질문하기 전에 짧게 자신의 시각을 먼저 제시하세요.\n- "저는 이 부분이 흥미로운데요 — 작가가 ~를 전제하고 있는 것 같아요. 혹시 이 전제에 동의하세요?" 형식을 사용하세요.\n- 질문은 한 번에 하나만. 연속 질문 금지.\n- 말투: 조용하지만 집요하게.`,
+            instruction: "당신은 '시온'입니다. 책과 독자의 해석에서 전제를 캐물어 스스로 생각하게 만드는 대화자입니다.\n\n태도:\n- 질문하기 전에 짧게 자신의 시각을 먼저 제시하세요.\n- '저는 이 부분이 흥미로운데요 — 작가가 ~를 전제하고 있는 것 같아요. 혹시 이 전제에 동의하세요?' 형식을 사용하세요.\n- 질문은 한 번에 하나만. 연속 질문 금지.\n- 말투: 조용하지만 집요하게.",
           },
           {
             id: "devil", emoji: "🔥", name: "재인", role: "반전 전문가",
             tagline: "그 반대도 생각해봤어요?",
             color: "#F4A261", bg: "rgba(244,162,97,0.07)", border: "rgba(244,162,97,0.22)",
-            instruction: `당신은 '재인'입니다. 책과 독자의 해석에 정반대 시각을 들이미는 악마의 변호인입니다.\n\n태도:\n- 독자나 책이 당연하게 여기는 것에 즉시 반론을 펼치세요.\n- "저는 완전히 다르게 읽었어요 — ~이기 때문입니다" 형식으로 입장을 먼저, 확실하게 밝히세요.\n- 도발적이되 그럴듯한 논리가 있어야 해요.\n- 말투: 짧고 도발적으로.`,
+            instruction: "당신은 '재인'입니다. 책과 독자의 해석에 정반대 시각을 들이미는 악마의 변호인입니다.\n\n태도:\n- 독자나 책이 당연하게 여기는 것에 즉시 반론을 펼치세요.\n- '저는 완전히 다르게 읽었어요 — ~이기 때문입니다' 형식으로 입장을 먼저, 확실하게 밝히세요.\n- 도발적이되 그럴듯한 논리가 있어야 해요.\n- 말투: 짧고 도발적으로.",
           },
           {
             id: "mirror", emoji: "🪞", name: "나은", role: "내면 탐험가",
             tagline: "그 말 뒤에 뭐가 있을까요",
             color: "#C77DFF", bg: "rgba(199,125,255,0.07)", border: "rgba(199,125,255,0.22)",
-            instruction: `당신은 '나은'입니다. 독자가 책에 반응하는 방식에서 그 사람의 내면을 비추어주는 거울입니다.\n\n태도:\n- 독자의 반응을 듣고 "이 반응이 말해주는 것"을 먼저 해석해서 건네주세요.\n- "그 장면에서 그렇게 느끼셨다는 건, 혹시 ~을 중요하게 여기시는 게 아닐까요?" 형식을 사용하세요.\n- 판단하지 말고, 거울처럼 비추어주는 역할만 하세요.\n- 말투: 조용하고 사색적으로.`,
+            instruction: "당신은 '나은'입니다. 독자가 책에 반응하는 방식에서 그 사람의 내면을 비추어주는 거울입니다.\n\n태도:\n- 독자의 반응을 듣고 '이 반응이 말해주는 것'을 먼저 해석해서 건네주세요.\n- '그 장면에서 그렇게 느끼셨다는 건, 혹시 ~을 중요하게 여기시는 게 아닐까요?' 형식을 사용하세요.\n- 판단하지 말고, 거울처럼 비추어주는 역할만 하세요.\n- 말투: 조용하고 사색적으로.",
           },
         ];
 
@@ -99,21 +105,21 @@
             tagline: "텍스트 너머를 읽는다",
             color: "#F2CC8F", bg: "rgba(242,204,143,0.07)", border: "rgba(242,204,143,0.22)",
             specs: HUMANITIES_SPECS, specLabel: "철학·인문 학파 선택",
-            instruction: `당신은 '소율'입니다. 선택된 철학·인문 사상으로 책을 깊이 분석하는 인문학도입니다.\n\n태도:\n- 책의 주제·인물·구조를 선택된 철학 시각으로 적극적으로 해석하세요.\n- "~의 관점에서 보면, 이 책은 ~을 말하고 있어요. 구체적으로 ~라는 장면/주제가 이를 잘 보여주죠" 형식으로 분석을 먼저 제시하세요.\n- 철학 개념을 쓸 때는 반드시 한 문장으로 쉽게 풀어 설명하세요.\n- 말투: 사유하는 듯 천천히, 따뜻하게.`,
+            instruction: "당신은 '소율'입니다. 선택된 철학·인문 사상으로 책을 깊이 분석하는 인문학도입니다.\n\n태도:\n- 책의 주제·인물·구조를 선택된 철학 시각으로 적극적으로 해석하세요.\n- '~의 관점에서 보면, 이 책은 ~을 말하고 있어요. 구체적으로 ~라는 장면/주제가 이를 잘 보여주죠' 형식으로 분석을 먼저 제시하세요.\n- 철학 개념을 쓸 때는 반드시 한 문장으로 쉽게 풀어 설명하세요.\n- 말투: 사유하는 듯 천천히, 따뜻하게.",
           },
           {
             id: "sociology", emoji: "🏛️", name: "다인", role: "사회학도",
             tagline: "개인 뒤의 구조를 본다",
             color: "#81B29A", bg: "rgba(129,178,154,0.07)", border: "rgba(129,178,154,0.22)",
             specs: SOCIOLOGY_SPECS, specLabel: "사회학 이론 선택",
-            instruction: `당신은 '다인'입니다. 선택된 사회학 이론으로 책 속 권력과 구조를 분석하는 사회학도입니다.\n\n태도:\n- 책의 인물·사건을 개인의 문제가 아닌 사회 구조의 산물로 해석하세요.\n- "~이론으로 보면, 이 인물의 선택은 사실 ~라는 구조의 결과예요" 형식으로 분석을 먼저 내놓으세요.\n- 이론 이름을 쓸 때는 한 줄 설명을 붙이세요.\n- 말투: 날카롭지만 차분하게.`,
+            instruction: "당신은 '다인'입니다. 선택된 사회학 이론으로 책 속 권력과 구조를 분석하는 사회학도입니다.\n\n태도:\n- 책의 인물·사건을 개인의 문제가 아닌 사회 구조의 산물로 해석하세요.\n- '~이론으로 보면, 이 인물의 선택은 사실 ~라는 구조의 결과예요' 형식으로 분석을 먼저 내놓으세요.\n- 이론 이름을 쓸 때는 한 줄 설명을 붙이세요.\n- 말투: 날카롭지만 차분하게.",
           },
           {
             id: "science", emoji: "🔬", name: "해온", role: "과학도",
             tagline: "데이터와 메커니즘으로 본다",
             color: "#6BAED6", bg: "rgba(107,174,214,0.07)", border: "rgba(107,174,214,0.22)",
             specs: SCIENCE_SPECS, specLabel: "과학 분야 선택",
-            instruction: `당신은 '해온'입니다. 선택된 과학 분야로 책 속 인간 행동과 현상을 분석하는 과학도입니다.\n\n태도:\n- 책의 주제와 인물 행동을 과학적 연구·개념으로 적극적으로 설명하세요.\n- "실제로 ~연구에 따르면 ~인데, 이 책의 ~부분이 그걸 잘 보여줘요" 형식으로 연결하세요.\n- 감정적·직관적 해석에는 과학적 메커니즘으로 보완하거나 반박하세요.\n- 말투: 명료하고 증거 중심으로.`,
+            instruction: "당신은 '해온'입니다. 선택된 과학 분야로 책 속 인간 행동과 현상을 분석하는 과학도입니다.\n\n태도:\n- 책의 주제와 인물 행동을 과학적 연구·개념으로 적극적으로 설명하세요.\n- '실제로 ~연구에 따르면 ~인데, 이 책의 ~부분이 그걸 잘 보여줘요' 형식으로 연결하세요.\n- 감정적·직관적 해석에는 과학적 메커니즘으로 보완하거나 반박하세요.\n- 말투: 명료하고 증거 중심으로.",
           },
         ];
 
@@ -158,12 +164,11 @@
             ? `\n## 라운드테이블 (${sel.length}인)\n- 각 발언은 이름으로 시작. 예: **지우:** / **소율:**\n- 서로 동의·반박하며 자연스럽게 토론. 독자를 항상 중심에 두세요.\n- 한 번에 1~2명 발언 후 독자에게 의견을 넘기세요.\n`
             : "";
 
-          // 새로 추가된 캔버스 블루프린트 양식
           const BLUEPRINTS = `
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📌 출력 양식 (Blueprints)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-토론의 흐름에 따라 아래의 출력 양식을 적극 활용하여 화면을 구성하세요. (주의: 마크다운 문법을 활용하되, 코드블록 생성을 위한 백틱 3개(\`\`\`)는 절대 사용하지 마세요)
+토론의 흐름에 따라 아래의 출력 양식을 적극 활용하여 화면을 구성하세요. (주의: 마크다운 문법을 활용하되, 코드블록 생성을 위한 백틱 기호 세 개는 절대 사용하지 마세요)
 
 【Blueprint 1: 도서 해부 리포트】 (초기 분석 및 발제 시)
 ### 📚 [《${book}》] {핵심을 찌르는 부제}
@@ -179,7 +184,7 @@
 {작품 속 배경이나 장소가 지닌 은유적 의미 해부}
 ***
 
-【Blueprint 2: AI 독서모임】 (페르소나 비평 및 라운드테이블 전개 시)
+【Blueprint 2: 심야 독서 클럽】 (페르소나 비평 및 라운드테이블 전개 시)
 ### 💬 The Late-Night Book Club (Critics' Corner)
 ${sel.map(p => `#### ${p.emoji} **${p.name} (${p.role})**\n> "{이 페르소나의 성격을 보여주는 도발적/핵심적 한 줄}"\n{주어진 태도와 렌즈에 맞춘 심층 비평 2~3문단}`).join('\n\n')}
 ***
@@ -196,7 +201,10 @@ c. 🎭 **역할극 및 IF 시나리오**
 > 만약 주인공이 다른 선택을 했다면? 인물의 입장에서 변호해 봅니다.
 d. 🌍 **현실 세계와의 연결**
 > 이 책의 메시지를 오늘날 우리 사회의 구체적 문제와 연결합니다.
-;
+#### [지식 확장]
+e. 🤔 **소크라테스식 질문**
+> "당신이라면 이 상황에서 어떤 정의를 선택하겠습니까?"
+***`;
 
           return `# 📚 독서토론 AI 설정 (Gemini 전용)
 
@@ -223,7 +231,6 @@ ${BLUEPRINTS}
 (이때 상황에 맞게 [Blueprint 1] 도서 해부 리포트 또는 [Blueprint 2] 심야 독서 클럽 양식을 활용해 첫 분석을 제시하세요.)`;
         }
 
-        // HTML 태그 제거 유틸리티
         const stripHtml = (html) => {
             if (!html) return "";
             return html.replace(/<[^>]*>?/gm, '').replace(/&[a-zA-Z]+;/g, ' ').trim();
@@ -242,10 +249,9 @@ ${BLUEPRINTS}
 
           const ALADIN_KEY = "ttbtwinwhee0938002";
 
-          // 사용자의 API를 직접 최우선으로 호출하는 로직
           const fetchWithFallback = async (url) => {
             const proxies = [
-              url, // 1순위: 사용자가 요청한 직접 호출 (CORS 우려가 있으나 우선 시도)
+              url,
               `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
               `https://corsproxy.io/?${encodeURIComponent(url)}`,
               `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
@@ -257,7 +263,6 @@ ${BLUEPRINTS}
                 if (!response.ok) continue;
 
                 let dataStr = await response.text();
-                // 알라딘 API 오류 방어 (끝에 붙는 세미콜론 제거)
                 if (dataStr.trim().endsWith(';')) {
                     dataStr = dataStr.trim().slice(0, -1);
                 }
@@ -266,7 +271,7 @@ ${BLUEPRINTS}
                 console.warn(`호출 실패 (${proxy}):`, error);
               }
             }
-            return null; // 모든 시도 실패 시
+            return null;
           };
 
           const searchBookViaAladin = async () => {
@@ -274,7 +279,6 @@ ${BLUEPRINTS}
             setIsLoading(true);
             
             try {
-              // 1단계: 상품 검색 API (ItemSearch)로 ItemId 확보
               const searchUrl = `https://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=${ALADIN_KEY}&Query=${encodeURIComponent(book)}&QueryType=Title&MaxResults=1&start=1&SearchTarget=Book&output=js&Version=20131101`;
               const searchData = await fetchWithFallback(searchUrl);
 
@@ -284,7 +288,6 @@ ${BLUEPRINTS}
                 const cleanAuthor = item.author.split(',')[0].replace('(지은이)', '').trim();
                 setAuthor(cleanAuthor);
 
-                // 2단계: 상품 조회 API (ItemLookUp)로 리뷰, 소개, 서지자료 등 세부 정보 확보
                 const lookupUrl = `https://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${ALADIN_KEY}&itemIdType=ItemId&ItemId=${item.itemId}&output=js&Version=20131101&OptResult=reviewList,fulldescription,fulldescription2,Toc,Story`;
                 const lookupData = await fetchWithFallback(lookupUrl);
 
@@ -294,27 +297,11 @@ ${BLUEPRINTS}
                   const detailItem = lookupData.item[0];
                   const infoParts = [];
 
-                  // 기본 요약
-                  if (detailItem.description) {
-                      infoParts.push(`[기본 요약]\n${stripHtml(detailItem.description)}`);
-                  }
-                  // 도서소개 (상품 설명)
-                  if (detailItem.fullDescription) {
-                      infoParts.push(`[도서소개 자료]\n${stripHtml(detailItem.fullDescription)}`);
-                  }
-                  // 보도자료 (출판사 제공)
-                  if (detailItem.fullDescription2) {
-                      infoParts.push(`[보도자료/출판사 리뷰]\n${stripHtml(detailItem.fullDescription2)}`);
-                  }
-                  // 상세 줄거리
-                  if (detailItem.subInfo?.Story) {
-                      infoParts.push(`[상세 줄거리]\n${stripHtml(detailItem.subInfo.Story)}`);
-                  }
-                  // 서지자료 (목차)
-                  if (detailItem.subInfo?.Toc) {
-                      infoParts.push(`[서지자료 - 목차]\n${stripHtml(detailItem.subInfo.Toc)}`);
-                  }
-                  // 독자 리뷰 목록
+                  if (detailItem.description) infoParts.push(`[기본 요약]\n${stripHtml(detailItem.description)}`);
+                  if (detailItem.fullDescription) infoParts.push(`[도서소개 자료]\n${stripHtml(detailItem.fullDescription)}`);
+                  if (detailItem.fullDescription2) infoParts.push(`[보도자료/출판사 리뷰]\n${stripHtml(detailItem.fullDescription2)}`);
+                  if (detailItem.subInfo?.Story) infoParts.push(`[상세 줄거리]\n${stripHtml(detailItem.subInfo.Story)}`);
+                  if (detailItem.subInfo?.Toc) infoParts.push(`[서지자료 - 목차]\n${stripHtml(detailItem.subInfo.Toc)}`);
                   if (detailItem.subInfo?.reviewList && detailItem.subInfo.reviewList.length > 0) {
                       const reviews = detailItem.subInfo.reviewList.map(r => `- ${stripHtml(r.title)} (작성자: ${r.writer})`).join('\n');
                       infoParts.push(`[독자 리뷰]\n${reviews}`);
@@ -322,7 +309,6 @@ ${BLUEPRINTS}
 
                   detailedText = infoParts.join('\n\n');
                 } else {
-                  // 상세조회 실패 시 기본 검색 정보로 대체
                   detailedText = `[기본 요약]\n${stripHtml(item.description)}`;
                 }
 
@@ -450,4 +436,173 @@ ${BLUEPRINTS}
                                     const son = (specSel[p.id] || []).includes(s.id);
                                     return (
                                       <button key={s.id} onClick={() => toggleSpec(p.id, s.id)} style={{
-                                        padding: "6px
+                                        padding: "6px 11px", cursor: "pointer", textAlign: "left",
+                                        background: son ? p.bg : "transparent",
+                                        border: `1px solid ${son ? p.border : "#222"}`,
+                                        borderRadius: "4px", transition: "all 0.12s",
+                                      }}>
+                                        <div style={{ fontSize: "12px", fontWeight: son ? "700" : "400", color: son ? p.color : "#666" }}>{s.label}</div>
+                                        <div style={{ fontSize: "10px", color: son ? p.color : "#383838", marginTop: "2px", maxWidth: "170px", lineHeight: "1.4", opacity: 0.8 }}>{s.desc}</div>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {selPersonas.length > 0 && (
+                      <div style={{ marginTop: "14px", padding: "11px 14px", background: "#0F0F0F", border: "1px solid #1A1A1A", borderRadius: "6px", fontSize: "12px" }}>
+                        <span style={{ color: "#3A3A3A", marginRight: "8px", fontFamily: "monospace" }}>선택됨</span>
+                        {selPersonas.map((id) => {
+                          const p = ALL_PERSONAS.find((x) => x.id === id);
+                          const specs = specSel[id];
+                          return (
+                            <span key={id} style={{ marginRight: "12px" }}>
+                              <span style={{ color: p.color }}>{p.emoji} {p.name}</span>
+                              {specs?.length > 0 && (
+                                <span style={{ color: "#3A3A3A", fontSize: "10px", fontFamily: "monospace" }}>
+                                  {" "}({specs.map((sid) => p.specs?.find((s) => s.id === sid)?.label).filter(Boolean).join(", ")})
+                                </span>
+                              )}
+                            </span>
+                          );
+                        })}
+                        {selPersonas.length >= 2 && (
+                          <span style={{ color: "#3A3A3A", fontSize: "11px", fontFamily: "monospace", display: "block", marginTop: "4px" }}>
+                            → 라운드테이블 {selPersonas.length}인 모드
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </Sec>
+                )}
+
+                {step >= 3 && (
+                  <div style={{
+                    margin: "4px 0 26px", padding: "13px 16px",
+                    background: "rgba(42,157,143,0.03)", border: "1px solid rgba(42,157,143,0.12)",
+                    borderRadius: "6px", fontSize: "12px", color: "#2A6A5A", lineHeight: "1.9",
+                  }}>
+                    <div style={{ color: "#2A9D8F", fontWeight: "700", marginBottom: "4px" }}>💡 딥 러닝 프롬프트 특징</div>
+                    <div style={{ color: "#3A7A6A" }}>
+                      1. **심층 API 연동:** 도서소개, 서지자료, 보도자료, 리뷰를 프롬프트에 제공합니다.<br />
+                      2. **구글 검색 강제 지시:** AI가 모르는 부분은 내장된 검색을 통해 즉시 파악하도록 강력하게 지시합니다.
+                    </div>
+                  </div>
+                )}
+
+                {ready && (
+                  <div style={{ background: "#0A0A0A", border: "1px solid #1C1C1C", borderRadius: "10px", overflow: "hidden" }}>
+                    <div style={{
+                      padding: "13px 18px", borderBottom: "1px solid #161616",
+                      display: "flex", justifyContent: "space-between", alignItems: "center",
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
+                        <span style={{ fontSize: "11px", color: "#444", fontFamily: "monospace", letterSpacing: "1px" }}>생성된 프롬프트 (Gemini 전용)</span>
+                        {selPersonas.length > 1 && (
+                          <span style={{ fontSize: "10px", background: "rgba(42,157,143,0.07)", color: "#2A9D8F", padding: "2px 7px", borderRadius: "3px", fontFamily: "monospace" }}>
+                            👥 {selPersonas.length}인 라운드테이블
+                          </span>
+                        )}
+                      </div>
+                      <button onClick={copy} style={{
+                        padding: "7px 17px", background: copied ? "#2A9D8F" : "#EDE9E0",
+                        color: copied ? "#fff" : "#0C0C0C", border: "none", borderRadius: "4px",
+                        cursor: "pointer", fontSize: "12px", fontWeight: "700", transition: "all 0.2s",
+                      }}>
+                        {copied ? "✓ 복사됨" : "복사하기"}
+                      </button>
+                    </div>
+                    <pre style={{
+                      padding: "20px", fontSize: "11.5px", lineHeight: "1.85", color: "#aaa",
+                      whiteSpace: "pre-wrap", wordBreak: "break-word",
+                      margin: 0, maxHeight: "420px", overflowY: "auto",
+                    }}>
+                      {prompt}
+                    </pre>
+                    <div style={{ padding: "11px 18px", borderTop: "1px solid #141414", fontSize: "12px", color: "#555", fontWeight: "bold" }}>
+                      → 복사 후 구글 Gemini 채팅창에 붙여넣으세요.
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        function PCard({ p, on, toggle, wide }) {
+          return (
+            <button onClick={() => toggle(p.id)} style={{
+              padding: "15px 14px", cursor: "pointer", textAlign: "left",
+              background: on ? p.bg : "#0F0F0F",
+              border: `1px solid ${on ? p.border : "#1A1A1A"}`,
+              borderRadius: "7px", transition: "all 0.14s", position: "relative",
+              width: wide ? "100%" : undefined,
+              display: wide ? "flex" : "block",
+              alignItems: wide ? "center" : undefined,
+              gap: wide ? "14px" : undefined,
+            }}>
+              {on && (
+                <div style={{
+                  position: "absolute", top: "9px", right: "10px",
+                  width: "16px", height: "16px", borderRadius: "50%",
+                  background: p.color, display: "flex", alignItems: "center",
+                  justifyContent: "center", fontSize: "9px", fontWeight: "900", color: "#000",
+                }}>✓</div>
+              )}
+              <div style={{ fontSize: wide ? "20px" : "18px", marginBottom: wide ? 0 : "6px", flexShrink: 0 }}>{p.emoji}</div>
+              <div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "6px", marginBottom: "2px" }}>
+                  <span style={{ fontWeight: "700", fontSize: "13px", color: on ? p.color : "#BBB" }}>{p.name}</span>
+                  <span style={{ fontSize: "10px", color: "#555", fontFamily: "monospace" }}>{p.role}</span>
+                </div>
+                <div style={{ fontSize: "11px", color: "#666" }}>"{p.tagline}"</div>
+              </div>
+            </button>
+          );
+        }
+
+        function Sec({ num, title, show, children }) {
+          if (!show) return null;
+          return (
+            <div style={{ marginBottom: "36px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "11px", marginBottom: "16px" }}>
+                <span style={{
+                  width: "22px", height: "22px", background: "#141414", border: "1px solid #252525",
+                  borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "10px", color: "#888", fontFamily: "monospace", flexShrink: 0,
+                }}>{num}</span>
+                <span style={{ fontSize: "16px", fontWeight: "700", letterSpacing: "-0.3px" }}>{title}</span>
+              </div>
+              {children}
+            </div>
+          );
+        }
+
+        function Next({ onClick }) {
+          return (
+            <button onClick={onClick} style={{
+              marginTop: "12px", padding: "9px 20px", background: "transparent",
+              border: "1px solid #333", borderRadius: "4px", color: "#aaa",
+              cursor: "pointer", fontSize: "13px", fontWeight: "600",
+            }}>다음 단계로 →</button>
+          );
+        }
+
+        function iStyle(color) {
+          return {
+            background: "#111", border: "1px solid #222",
+            borderRadius: "6px", padding: "13px 15px", fontSize: "15px",
+            color, outline: "none", boxSizing: "border-box", transition: "border 0.2s"
+          };
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
