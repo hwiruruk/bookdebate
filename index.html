@@ -23,7 +23,6 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // 브라우저 환경이므로 import 대신 전역 React 객체에서 useState를 가져옵니다.
         const { useState } = React;
 
         const LEVELS = [
@@ -191,39 +190,64 @@ ${multiRule}---
           const [step, setStep] = useState(1);
           const [isLoading, setIsLoading] = useState(false);
 
-          // 알라딘 API TTB Key
           const ALADIN_KEY = "ttbtwinwhee0938002";
 
+          // 여러 프록시를 순차적으로 시도하는 Fallback 로직 추가 (GitHub Pages 대응)
           const searchBookViaAladin = async () => {
             if (!book.trim()) return;
             setIsLoading(true);
             
-            try {
-              const searchUrl = `https://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=${ALADIN_KEY}&Query=${encodeURIComponent(book)}&QueryType=Title&MaxResults=1&start=1&SearchTarget=Book&output=js&Version=20131101`;
-              const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(searchUrl)}`;
-              
-              const response = await fetch(proxyUrl);
-              if (!response.ok) throw new Error("Network response was not ok");
-              
-              const data = await response.json();
-              const parsedData = JSON.parse(data.contents);
-              
-              if (parsedData.item && parsedData.item.length > 0) {
-                const item = parsedData.item[0];
-                setBook(item.title);
-                const cleanAuthor = item.author.split(',')[0].replace('(지은이)', '').trim();
-                setAuthor(cleanAuthor);
-                setDescription(item.description || "책 소개 정보가 없습니다.");
-              } else {
-                setDescription("알라딘에서 책 정보를 찾지 못했습니다. Gemini의 검색 기능에 의존합니다.");
+            const targetUrl = `https://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=${ALADIN_KEY}&Query=${encodeURIComponent(book)}&QueryType=Title&MaxResults=1&start=1&SearchTarget=Book&output=js&Version=20131101`;
+            
+            // 안정적인 순서대로 프록시 배열 설정
+            const proxies = [
+              `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
+              `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+              `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
+            ];
+
+            let success = false;
+
+            for (const proxy of proxies) {
+              try {
+                const response = await fetch(proxy);
+                if (!response.ok) continue; // 실패하면 다음 프록시로 넘어감
+
+                let dataStr = await response.text();
+                
+                // 알라딘 API 끝에 붙는 세미콜론 예외 처리
+                if (dataStr.trim().endsWith(';')) {
+                    dataStr = dataStr.trim().slice(0, -1);
+                }
+
+                const parsedData = JSON.parse(dataStr);
+                
+                if (parsedData.item && parsedData.item.length > 0) {
+                  const item = parsedData.item[0];
+                  setBook(item.title);
+                  const cleanAuthor = item.author.split(',')[0].replace('(지은이)', '').trim();
+                  setAuthor(cleanAuthor);
+                  setDescription(item.description || "책 소개 정보가 없습니다.");
+                } else {
+                  setDescription("알라딘에서 책 정보를 찾지 못했습니다. Gemini의 검색 기능에 의존합니다.");
+                }
+
+                success = true;
+                break; // 성공하면 반복문 탈출
+
+              } catch (error) {
+                console.warn(`프록시(${proxy}) 호출 실패:`, error);
+                // 에러 발생 시 다음 프록시 시도
               }
-            } catch (error) {
-              console.error("API Fetch Error:", error);
-              setDescription("알라딘 API 호출 중 문제가 발생했습니다. Gemini의 검색 기능에 의존합니다.");
-            } finally {
-              setIsLoading(false);
-              setStep(2);
             }
+
+            // 모든 프록시가 실패했을 경우
+            if (!success) {
+              setDescription("알라딘 API 통신에 실패했습니다 (CORS 프록시 오류). Gemini의 내장 검색 기능에 의존하여 진행합니다.");
+            }
+
+            setIsLoading(false);
+            setStep(2);
           };
 
           const togglePersona = (id) =>
